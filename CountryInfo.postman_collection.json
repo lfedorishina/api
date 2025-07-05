@@ -1,0 +1,529 @@
+{
+	"info": {
+		"_postman_id": "5f45bfa0-d8ad-481a-b10b-817108fdcace",
+		"name": "CountryInfo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45692595",
+		"_collection_link": "https://www.postman.com/lola-3906921/workspace/lola-s-workspace/collection/45692595-5f45bfa0-d8ad-481a-b10b-817108fdcace?action=share&source=collection_link&creator=45692595"
+	},
+	"item": [
+		{
+			"name": "ListOfContinentsByName",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "SOAPAction",
+						"value": "\"http://www.oorsprong.org/websamples.countryinfo/ListOfCurrenciesByName\"",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "{{Content-Type}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:web=\"http://www.oorsprong.org/websamples.countryinfo\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <web:ListOfContinentsByName/>\n   </soapenv:Body>\n</soapenv:Envelope>",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url_webservices}}",
+					"host": [
+						"{{url_webservices}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ListOfCurrenciesByName",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains Euro\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Euro\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "SOAPAction",
+						"value": "\"http://www.oorsprong.org/websamples.countryinfo/ListOfCurrenciesByName\"",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "{{Content-Type}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:web=\"http://www.oorsprong.org/websamples.countryinfo\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <web:ListOfCurrenciesByName/>\n   </soapenv:Body>\n</soapenv:Envelope>",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url_webservices}}",
+					"host": [
+						"{{url_webservices}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ListOfCountryNamesByName",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains Lithuania\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Lithuania\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "{{Content-Type}}",
+						"type": "text"
+					},
+					{
+						"key": "SOAPAction",
+						"value": "\"http://www.oorsprong.org/websamples.countryinfo/ListOfCountryNamesByName\"",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:web=\"http://www.oorsprong.org/websamples.countryinfo\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <web:ListOfCountryNamesByName/>\n   </soapenv:Body>\n</soapenv:Envelope>",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url_webservices}}",
+					"host": [
+						"{{url_webservices}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CountryName_LT",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains Lithuania\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Lithuania\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "{{Content-Type}}",
+						"type": "text"
+					},
+					{
+						"key": "SOAPAction",
+						"value": "\"http://www.oorsprong.org/websamples.countryinfo/CountryName\"",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:web=\"http://www.oorsprong.org/websamples.countryinfo\">\n   <soap:Header/>\n   <soap:Body>\n      <web:CountryName>\n         <web:sCountryISOCode>LT</web:sCountryISOCode>\n      </web:CountryName>\n   </soap:Body>\n</soap:Envelope>",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url_webservices}}",
+					"host": [
+						"{{url_webservices}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CountryISOCode_LT",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains LT\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"LT\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "{{Content-Type}}",
+						"type": "text"
+					},
+					{
+						"key": "SOAPAction",
+						"value": "\"http://www.oorsprong.org/websamples.countryinfo/CountryISOCode\"",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:web=\"http://www.oorsprong.org/websamples.countryinfo\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <web:CountryISOCode>\n         <web:sCountryName>Lithuania</web:sCountryName>\n      </web:CountryISOCode>\n   </soapenv:Body>\n</soapenv:Envelope>",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url_webservices}}",
+					"host": [
+						"{{url_webservices}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "FullCountryInfo_LT",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains Lithuania\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Lithuania\");",
+							"});",
+							"",
+							"pm.test(\"Response contains Vilnius\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Vilnius\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "{{Content-Type}}",
+						"type": "text"
+					},
+					{
+						"key": "SOAPAction",
+						"value": "\"http://www.oorsprong.org/websamples.countryinfo/FullCountryInfo\"",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:web=\"http://www.oorsprong.org/websamples.countryinfo\">\n   <soap:Header/>\n   <soap:Body>\n      <web:FullCountryInfo>\n         <web:sCountryISOCode>LT</web:sCountryISOCode>\n      </web:FullCountryInfo>\n   </soap:Body>\n</soap:Envelope>",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url_webservices}}",
+					"host": [
+						"{{url_webservices}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "LanguageName_LT",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains Lithuanian\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Lithuanian\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "{{Content-Type}}",
+						"type": "text"
+					},
+					{
+						"key": "SOAPAction",
+						"value": "\"http://www.oorsprong.org/websamples.countryinfo/LanguageName\"",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:web=\"http://www.oorsprong.org/websamples.countryinfo\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <web:LanguageName>\n         <web:sISOCode>lit</web:sISOCode>\n      </web:LanguageName>\n   </soapenv:Body>\n</soapenv:Envelope>",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url_webservices}}",
+					"host": [
+						"{{url_webservices}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CountryName_InvalidCode",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response is empty for invalid country code\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"<CountryNameResult/>\");",
+							"});",
+							"",
+							"pm.test(\"Country *should* be found\", function () {",
+							"    pm.expect(pm.response.text()).to.not.include(\"Country not found in the database\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "{{Content-Type}}",
+						"type": "text"
+					},
+					{
+						"key": "SOAPAction",
+						"value": "\"http://www.oorsprong.org/websamples.countryinfo/CountryName\"",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:web=\"http://www.oorsprong.org/websamples.countryinfo\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <web:CountryName>\n         <web:sCountryISOCode>XXX</web:sCountryISOCode>\n      </web:CountryName>\n   </soapenv:Body>\n</soapenv:Envelope>",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url_webservices}}",
+					"host": [
+						"{{url_webservices}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "LanguageName_MissingParam",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"❌ Should not return 500\", function () {",
+							"    pm.expect(pm.response.code).to.not.eql(500);  // теперь завалится, если вернёт 500",
+							"});",
+							"",
+							"pm.test(\"❌ Should return valid response, not internal error\", function () {",
+							"    pm.expect(pm.response.text()).to.not.include(\"Internal server error\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "{{Content-Type}}",
+						"type": "text"
+					},
+					{
+						"key": "SOAPAction",
+						"value": "\"http://www.oorsprong.org/websamples.countryinfo/LanguageName\"",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:web=\"http://www.oorsprong.org/websamples.countryinfo\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <web:LanguageName>\n         <!-- param missing -->\n      </web:LanguageName>\n   </soapenv:Body>\n</soapenv:Envelope>",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url_webservices}}",
+					"host": [
+						"{{url_webservices}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"pm.test(\"⏱ Response time < 1000ms\", function () {",
+					"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "Content-Type",
+			"value": "text/xml; charset=utf-8",
+			"type": "string"
+		},
+		{
+			"key": "url_webservices",
+			"value": "http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso",
+			"type": "string"
+		}
+	]
+}
