@@ -1,0 +1,2245 @@
+{
+	"info": {
+		"_postman_id": "31c16aa8-33f7-42be-b696-670706eb8261",
+		"name": "DemoShopping",
+		"description": "Tests for API DemoShopping",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45692595",
+		"_collection_link": "https://www.postman.com/lola-3906921/workspace/lola-s-workspace/collection/45692595-31c16aa8-33f7-42be-b696-670706eb8261?action=share&source=collection_link&creator=45692595"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "New User Registration",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"let jsonData = {};",
+									"try {",
+									"    jsonData = pm.response.json();",
+									"} catch (e) {",
+									"    console.warn(\"❗️ JSON не разобрался:\", e);",
+									"}",
+									"",
+									"// Проверка на допустимые статусы",
+									"pm.test(\"Check if status is 200 or 400\", function () {",
+									"    pm.expect([200, 400]).to.include(status);",
+									"});",
+									"",
+									"// === Статус 200 ===",
+									"if (status === 200) {",
+									"    pm.test(\"✅ Status 200: Success message present\", function () {",
+									"        pm.expect(jsonData).to.have.property(\"message\");",
+									"        pm.expect(jsonData.message).to.include(\"успешно\");",
+									"    });",
+									"",
+									"    // Проверка на наличие токена, если он вдруг появится",
+									"    if (jsonData.token) {",
+									"        pm.test(\"✅ Optional: Token is present\", function () {",
+									"            pm.environment.set(\"key\", jsonData.token);",
+									"            pm.expect(jsonData).to.have.property(\"token\");",
+									"        });",
+									"    } else {",
+									"        console.info(\"ℹ️ Токен не возвращается при регистрации — это нормально.\");",
+									"    }",
+									"}",
+									"",
+									"// === Статус 400 ===",
+									"else if (status === 400) {",
+									"    pm.test(\"⚠️ Status 400: Invalid user data\", function () {",
+									"        pm.response.to.have.status(400);",
+									"    });",
+									"}",
+									"",
+									"// === Другие статусы ===",
+									"else {",
+									"    pm.test(\"❌ Unexpected status code: \" + status, function () {",
+									"        pm.expect.fail(\"Received unexpected status: \" + status);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Existing User Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"let responseJson = {};",
+									"try {",
+									"    responseJson = pm.response.json();",
+									"} catch (e) {",
+									"    console.warn(\"❗️Response is not a valid JSON\");",
+									"}",
+									"",
+									"// === Проверка допустимых статусов ===",
+									"pm.test(\"Check if status is one of allowed (200 or 400)\", function () {",
+									"    pm.expect([200, 400]).to.include(status);",
+									"});",
+									"",
+									"// === Когда статус 200 ===",
+									"if (status === 200) {",
+									"    pm.test(\"✅ Status 200: Successful authorization\", function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"",
+									"    pm.test(\"✅ Token is saved to the collection variable\", function () {",
+									"        if (responseJson.token) {",
+									"            pm.environment.set(\"key\", responseJson.token);",
+									"            const savedToken = pm.environment.get(\"key\");",
+									"            pm.expect(savedToken).to.eql(responseJson.token);",
+									"        } else {",
+									"            console.warn(\"⚠️ Токен отсутствует в ответе\");",
+									"        }",
+									"    });",
+									"",
+									"    pm.test(\"✅ Response contains token\", function () {",
+									"        pm.expect(responseJson).to.have.property(\"token\");",
+									"    });",
+									"}",
+									"",
+									"// === Когда статус 400 ===",
+									"else if (status === 400) {",
+									"    pm.test(\"⚠️ Status 400: Invalid data\", function () {",
+									"        pm.response.to.have.status(400);",
+									"        // Можно добавить проверки на тело, например:",
+									"        pm.expect(responseJson).to.have.property(\"message\");",
+									"    });",
+									"}",
+									"",
+									"// === Если пришел другой неожиданный статус ===",
+									"else {",
+									"    pm.test(\"❌ Unexpected status code\", function () {",
+									"        pm.expect.fail(\"Received unexpected status: \" + status);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"{{username_login}}\",\n  \"password\": \"{{password_login}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Adding New User",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200: User successfully created\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const text = pm.response.text();",
+									"const match = text.match(/ID:\\s*(\\d+)/);",
+									"",
+									"if (match) {",
+									"    const userId = match[1];",
+									"    pm.environment.set(\"delete_user_id\", userId);",
+									"    console.log(\"User ID saved for deletion:\", userId);",
+									"} else {",
+									"    console.warn(\"User ID not found in response.\");",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"{{test_username}}\",\n  \"password\": \"{{test_password}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fetching all user_ids and logins",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200: Users list returned successfully\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data).to.be.an(\"array\");",
+									"});",
+									"",
+									"pm.test(\"Each user object contains user_id and login\", function () {",
+									"    const data = pm.response.json();",
+									"    data.forEach(user => {",
+									"        pm.expect(user).to.have.property(\"user_id\");",
+									"        pm.expect(user).to.have.property(\"login\");",
+									"    });",
+									"});",
+									"",
+									"console.log(\"User list:\", pm.response.json());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200: User deleted or 404: Not found\", function () {",
+									"    pm.expect([200, 404]).to.include(pm.response.code);",
+									"});",
+									"",
+									"console.log(\"Tried to delete user_id:\", pm.environment.get(\"delete_user_id\"));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/{{delete_user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{delete_user_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Returns a list of all products",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200: Successful request\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array of products\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an(\"array\");",
+									"});",
+									"",
+									"const products = pm.response.json();",
+									"",
+									"if (products.length > 0) {",
+									"    const randomProduct = products[Math.floor(Math.random() * products.length)];",
+									"    pm.environment.set(\"test_product_id\", randomProduct.product_id);",
+									"    console.log(\"Random productId set:\", randomProduct.product_id);",
+									"} else {",
+									"    console.warn(\"Product list is empty!\");",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"id\": 0,\n    \"name\": \"string\",\n    \"description\": \"string\",\n    \"price\": 0,\n    \"category\": \"string\",\n    \"manufacturer\": \"string\",\n    \"imageUrl\": \"string\",\n    \"freeShipping\": true\n  }\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/products",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Adding New Product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"",
+									"// Если запрос успешен (например, продукт добавлен)",
+									"if (status === 200) {",
+									"    pm.test(\"✅ Status 200: Product successfully added\", function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"}",
+									"// Если отправлен некорректный запрос",
+									"else if (status === 400) {",
+									"    pm.test(\"⚠️ Negative case: 400 Bad Request received\", function () {",
+									"        pm.response.to.have.status(400);",
+									"    });",
+									"}",
+									"// Обработка других неожиданных статусов",
+									"else {",
+									"    pm.test(\"❌ Unexpected status code\", function () {",
+									"        pm.expect.fail(\"Expected 200 or 400, but got: \" + status);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Example Product\",\n  \"description\": \"This is an example product.\",\n  \"price\": 100,\n  \"category\": \"Electronics\",\n  \"manufacturer\": \"Example Manufacturer\",\n  \"imageUrl\": \"http://example.com/image.jpg\",\n  \"freeShipping\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/add-product",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"add-product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search of the product by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    pm.test(\"✅ Status 200: Product data returned\", function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"",
+									"    pm.test(\"✅ Response contains product fields\", function () {",
+									"        const product = pm.response.json();",
+									"        pm.expect(product).to.have.property(\"product_id\");",
+									"        pm.expect(product).to.have.property(\"name\");",
+									"        pm.expect(product).to.have.property(\"price\");",
+									"    });",
+									"}",
+									"else if (pm.response.code === 404) {",
+									"    pm.test(\"⚠️ Status 404: Product not found\", function () {",
+									"        pm.response.to.have.status(404);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 0,\n  \"name\": \"string\",\n  \"description\": \"string\",\n  \"price\": 0,\n  \"category\": \"string\",\n  \"manufacturer\": \"string\",\n  \"imageUrl\": \"string\",\n  \"freeShipping\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/products/id/{{product_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"id",
+								"{{product_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deleting products by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"",
+									"if (status === 200) {",
+									"    pm.test(\"✅ Status 200: Product successfully deleted\", function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"} else if (status === 403) {",
+									"    pm.test(\"❌ Status 403: Deletion is forbidden (FAIL)\", function () {",
+									"        pm.expect.fail(\"Expected 200, but got 403 Forbidden — deletion is not allowed.\");",
+									"    });",
+									"} else if (status === 404) {",
+									"    pm.test(\"❌ Status 404: Product not found (FAIL)\", function () {",
+									"        pm.expect.fail(\"Expected 200, but got 404 — product does not exist.\");",
+									"    });",
+									"} else {",
+									"    pm.test(`❌ Unexpected status code: ${status}`, function () {",
+									"        pm.expect.fail(`Expected 200, but got unexpected status: ${status}`);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/products/id/{{product_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"id",
+								"{{product_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Full update of the product by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"",
+									"if (status === 200) {",
+									"    pm.test(\"✅ Status 200 (OK): Product updated successfully\", function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"} else if (status === 400) {",
+									"    pm.test(\"❌ Status 400 (Bad Request)\", function () {",
+									"        pm.expect.fail(\"Expected 200, but got 400 Bad Request — invalid or missing data.\");",
+									"    });",
+									"} else if (status === 403) {",
+									"    pm.test(\"❌ Status 403 (Forbidden)\", function () {",
+									"        pm.expect.fail(\"Expected 200, but got 403 Forbidden — you don’t have permission to update this product.\");",
+									"    });",
+									"} else if (status === 404) {",
+									"    pm.test(\"❌ Status 404 (Not Found)\", function () {",
+									"        pm.expect.fail(\"Expected 200, but got 404 — product with this ID not found.\");",
+									"    });",
+									"} else {",
+									"    pm.test(`❌ Unexpected status code: ${status}`, function () {",
+									"        pm.expect.fail(`Expected 200, but got unexpected status: ${status}`);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"string\",\n  \"description\": \"string\",\n  \"price\": 0,\n  \"category\": \"string\",\n  \"manufacturer\": \"string\",\n  \"imageUrl\": \"string\",\n  \"freeShipping\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/products/id/{{product_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"id",
+								"{{product_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Partial update of the product by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"",
+									"if (status === 200) {",
+									"    pm.test(\"✅ Status 200: Product successfully updated\", function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"} else if (status === 400) {",
+									"    pm.test(\"❌ Status 400: Invalid product data\", function () {",
+									"        pm.expect.fail(\"Expected 200, but got 400 Bad Request — invalid or missing data.\");",
+									"    });",
+									"} else if (status === 403) {",
+									"    pm.test(\"❌ Status 403: Update is forbidden\", function () {",
+									"        pm.expect.fail(\"Expected 200, but got 403 Forbidden — you don’t have permission to update this product.\");",
+									"    });",
+									"} else if (status === 404) {",
+									"    pm.test(\"❌ Status 404: Product not found\", function () {",
+									"        pm.expect.fail(\"Expected 200, but got 404 — product with this ID does not exist.\");",
+									"    });",
+									"} else {",
+									"    pm.test(`❌ Unexpected status code: ${status}`, function () {",
+									"        pm.expect.fail(`Expected 200, but got unexpected status: ${status}`);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"string\",\n  \"description\": \"string\",\n  \"price\": 0,\n  \"category\": \"string\",\n  \"manufacturer\": \"string\",\n  \"imageUrl\": \"string\",\n  \"freeShipping\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/products/id/{{product_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"id",
+								"{{product_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search by Category",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    pm.test(\"Status 200: Products by category successfully returned\", function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"} else if (pm.response.code === 404) {",
+									"    pm.test(\"Status 404: No products found in this category\", function () {",
+									"        pm.response.to.have.status(404);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"id\": 0,\n    \"name\": \"string\",\n    \"description\": \"string\",\n    \"price\": 0,\n    \"category\": \"string\",\n    \"manufacturer\": \"string\",\n    \"imageUrl\": \"string\",\n    \"freeShipping\": true\n  }\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/products/FindByCategory?category={{category}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"FindByCategory"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "{{category}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search by Manufacturer",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    pm.test(\"Status 200: Products by manufacturer successfully returned\", function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"",
+									"    pm.test(\"Response contains an array of products\", function () {",
+									"        const data = pm.response.json();",
+									"        pm.expect(data).to.be.an(\"array\");",
+									"    });",
+									"} else if (pm.response.code === 404) {",
+									"    pm.test(\"Status 404: No products found for this manufacturer\", function () {",
+									"        pm.response.to.have.status(404);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"id\": 0,\n    \"name\": \"string\",\n    \"description\": \"string\",\n    \"price\": 0,\n    \"category\": \"string\",\n    \"manufacturer\": \"string\",\n    \"imageUrl\": \"string\",\n    \"freeShipping\": true\n  }\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/products/FindByManufacturer?manufacturer={{manufacturer}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"FindByManufacturer"
+							],
+							"query": [
+								{
+									"key": "manufacturer",
+									"value": "{{manufacturer}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search by Free Shipping",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    pm.test(\"Status 200: Products with specified shipping found\", function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"",
+									"    pm.test(\"Response is an array of products\", function () {",
+									"        const data = pm.response.json();",
+									"        pm.expect(data).to.be.an(\"array\");",
+									"    });",
+									"} else if (pm.response.code === 404) {",
+									"    pm.test(\"Status 404: No products found with this free shipping setting\", function () {",
+									"        pm.response.to.have.status(404);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"id\": 0,\n    \"name\": \"string\",\n    \"description\": \"string\",\n    \"price\": 0,\n    \"category\": \"string\",\n    \"manufacturer\": \"string\",\n    \"imageUrl\": \"string\",\n    \"freeShipping\": true\n  }\n]"
+						},
+						"url": {
+							"raw": "{{base_url}}/products/FindByShipping?freeShipping={{freeShipping}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"FindByShipping"
+							],
+							"query": [
+								{
+									"key": "freeShipping",
+									"value": "{{freeShipping}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filtering search of products",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    pm.test(\"Status 200: Filtered products successfully returned\", function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"",
+									"    pm.test(\"Response contains an array of products\", function () {",
+									"        const data = pm.response.json();",
+									"        pm.expect(data).to.be.an(\"array\");",
+									"    });",
+									"} else if (pm.response.code === 400) {",
+									"    pm.test(\"Status 400: Invalid filter parameters\", function () {",
+									"        pm.response.to.have.status(400);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"id\": 0,\n    \"name\": \"string\",\n    \"description\": \"string\",\n    \"price\": 0,\n    \"category\": \"string\",\n    \"manufacturer\": \"string\",\n    \"imageUrl\": \"string\",\n    \"freeShipping\": true\n  }\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/products/filter?category={{category}}&manufacturer={{manufacturer}}&freeShipping={{freeShipping}}&minPrice={{minPrice}}&maxPrice={{maxPrice}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"filter"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "{{category}}"
+								},
+								{
+									"key": "manufacturer",
+									"value": "{{manufacturer}}"
+								},
+								{
+									"key": "freeShipping",
+									"value": "{{freeShipping}}"
+								},
+								{
+									"key": "minPrice",
+									"value": "{{minPrice}}"
+								},
+								{
+									"key": "maxPrice",
+									"value": "{{maxPrice}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cart",
+			"item": [
+				{
+					"name": "Adding products to user's cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    pm.test(\"Status 200: Product successfully added to cart\", function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"} else if (pm.response.code === 400) {",
+									"    pm.test(\"Status 400: Invalid request body\", function () {",
+									"        pm.response.to.have.status(400);",
+									"    });",
+									"} else if (pm.response.code === 401) {",
+									"    pm.test(\"Status 401: Unauthorized user\", function () {",
+									"        pm.response.to.have.status(401);",
+									"    });",
+									"} else if (pm.response.code === 500) {",
+									"    pm.test(\"Status 500: Internal server error\", function () {",
+									"        pm.response.to.have.status(500);",
+									"    });",
+									"} else {",
+									"    pm.test(`Unexpected status code: ${pm.response.code}`, function () {",
+									"        pm.expect([200, 400, 401, 500]).to.include(pm.response.code);",
+									"    });",
+									"}",
+									"",
+									"// Проверка, что тело ответа содержит подтверждение (для 200)",
+									"pm.test(\"Response contains success confirmation\", function () {",
+									"    const responseText = pm.response.text();",
+									"    pm.expect(",
+									"        responseText.includes(\"Товар добавлен в корзину пользователя\") ||",
+									"        responseText.includes(\"Количество товара в корзине обновлено\")",
+									"    ).to.be.true;",
+									"});",
+									"",
+									"try {",
+									"    const cart = pm.response.json();",
+									"    const addedProductId = pm.collectionVariables.get(\"test_product_id\");",
+									"",
+									"    const addedItem = cart.find(item => item.product_id == addedProductId);",
+									"",
+									"    if (addedItem && addedItem.cart_item_id) {",
+									"        pm.collectionVariables.set(\"cartItemId\", addedItem.cart_item_id);",
+									"        console.log(\"✅ cartItemId saved:\", addedItem.cart_item_id);",
+									"    } else {",
+									"        console.warn(\"⚠️ Product not found in cart:\", addedProductId);",
+									"    }",
+									"} catch (e) {",
+									"    console.error(\"❌ Failed to parse cart JSON:\", e);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const randomQuantity = Math.floor(Math.random() * 2) + 1;",
+									"pm.collectionVariables.set(\"test_quantity\", randomQuantity);",
+									"console.log(\"Quantity set to:\", randomQuantity);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"productId\": {{test_product_id}},\n  \"quantity\": {{test_quantity}}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/cart",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Returning the Cart  products",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"console.log(\"KEY USED:\", pm.environment.get(\"key\"));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    pm.test(\"Status 200: Cart content successfully retrieved\", function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"} else if (pm.response.code === 401) {",
+									"    pm.test(\"Status 401: User not authorized\", function () {",
+									"        pm.response.to.have.status(401);",
+									"    });",
+									"} else if (pm.response.code === 500) {",
+									"    pm.test(\"Status 500: Server error\", function () {",
+									"        pm.response.to.have.status(500);",
+									"    });",
+									"} else {",
+									"    pm.test(`Unexpected status code: ${pm.response.code}`, function () {",
+									"        pm.expect([200, 401, 500]).to.include(pm.response.code);",
+									"    });",
+									"}",
+									"",
+									"const cart = pm.response.json();",
+									"const targetProductId = pm.collectionVariables.get(\"test_product_id\");",
+									"",
+									"const matchingItem = cart.find(item => item.product_id == targetProductId);",
+									"",
+									"if (matchingItem && matchingItem.cart_item_id) {",
+									"    pm.environment.set(\"cartItemId\", matchingItem.cart_item_id);",
+									"    console.log(\"✅ Matching cartItemId saved:\", matchingItem.cart_item_id);",
+									"} else {",
+									"    console.warn(\"⚠️ No matching item found in cart for product_id:\", targetProductId);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Value",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/getCart",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"getCart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Updating amount of products in the user's cart",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const qty = Math.floor(Math.random() * 3) + 2; // 0,1,2 + 2 → 2..4",
+									"pm.environment.set(\"test_quantity\", qty);",
+									"console.log(\"📦 Quantity to update (2-4):\", qty);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"",
+									"if (status === 200) {",
+									"    pm.test(\"✅ Status 200: Quantity updated\", function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"} else if (status === 400) {",
+									"    pm.test(\"❌ Status 400: Bad request\", function () {",
+									"        pm.expect.fail(\"Expected 200, but got 400 — check body or path.\");",
+									"    });",
+									"} else if (status === 401) {",
+									"    pm.test(\"❌ Status 401: Unauthorized\", function () {",
+									"        pm.expect.fail(\"Expected 200, but got 401 — token missing or invalid.\");",
+									"    });",
+									"} else if (status === 404) {",
+									"    pm.test(\"❌ Status 404: Cart item not found\", function () {",
+									"        pm.expect.fail(\"Expected 200, but got 404 — cartItemId is wrong or expired.\");",
+									"    });",
+									"} else if (status === 500) {",
+									"    pm.test(\"❌ Status 500: Server error\", function () {",
+									"        pm.expect.fail(\"Expected 200, but got 500 — backend issue.\");",
+									"    });",
+									"} else {",
+									"    pm.test(`❌ Unexpected status: ${status}`, function () {",
+									"        pm.expect.fail(`Expected 200, but got unexpected status: ${status}`);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"quantity\": {{test_quantity}}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/cart/{{cartItemId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cart",
+								"{{cartItemId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deleting products from the user's cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"",
+									"if (status === 200) {",
+									"    pm.test(\"✅ Item deleted from cart\", function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"} else {",
+									"    pm.test(`❌ Failed to delete. Status ${status}`, function () {",
+									"        pm.expect.fail(`Unexpected status: ${status}`);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/cart/{{cartItemId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cart",
+								"{{cartItemId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "Receiving a list of all user's orders",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"",
+									"if (status === 200) {",
+									"    pm.test(\"✅ Status 200: Orders successfully received\", function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"} else if (status === 401) {",
+									"    pm.test(\"🔒 Status 401: Unauthorized\", function () {",
+									"        pm.response.to.have.status(401);",
+									"    });",
+									"} else {",
+									"    pm.test(`❌ Unexpected status: ${status}`, function () {",
+									"        pm.expect.fail(`Expected 200, got ${status}`);",
+									"    });",
+									"}",
+									"",
+									"try {",
+									"    let orders = pm.response.json();",
+									"",
+									"    // Сортировка по убыванию",
+									"    orders.sort((a, b) => b.order_id - a.order_id);",
+									"    const firstOrder = orders[0];",
+									"",
+									"    pm.environment.set(\"orderId\", firstOrder.order_id);",
+									"    console.log(\"🧾 orderId:\", firstOrder.order_id);",
+									"",
+									"    const firstItem = firstOrder.items?.[0];",
+									"    if (firstItem && firstItem.product_id) {",
+									"        pm.environment.set(\"productId\", firstItem.product_id);",
+									"        console.log(\"✅ productId сохранён:\", firstItem.product_id);",
+									"    } else {",
+									"        console.warn(\"⚠️ Нет товаров в заказе\");",
+									"    }",
+									"} catch (e) {",
+									"    console.error(\"❌ Failed to parse or process orders:\", e);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user-orders",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user-orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Order of products from the user's cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"",
+									"if (status === 201) {",
+									"    pm.test(\"✅ Status 201: Order successfully created\", function () {",
+									"        pm.response.to.have.status(201);",
+									"    });",
+									"} else if (status === 401) {",
+									"    pm.test(\"X Status 401: Unauthorized\", function () {",
+									"        pm.response.to.have.status(401);",
+									"    });",
+									"} else if (status === 500) {",
+									"    pm.test(\"X Status 500: Server error\", function () {",
+									"        pm.response.to.have.status(500);",
+									"    });",
+									"} else {",
+									"    pm.test(`X Unexpected status: ${status}`, function () {",
+									"        pm.expect.fail(`Unexpected status: ${status}`);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/orders",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change amount of products in order",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const quantity = Math.floor(Math.random() * 3) + 1;",
+									"",
+									"// Сохраняем в переменную запроса",
+									"pm.variables.set(\"randomQuantity\", quantity);",
+									"console.log(\"📦 Random quantity set:\", quantity);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const responseText = pm.response.text();",
+									"",
+									"if (status === 200) {",
+									"    pm.test(\"✅ 200: Quantity successfully updated\", function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"} else if (status === 400) {",
+									"    pm.test(\"❌ 400: Bad Request\", function () {",
+									"        pm.response.to.have.status(400);",
+									"        pm.expect(responseText).to.include(\"Неверный запрос\");",
+									"        pm.expect.fail(\"400: Bad Request\");",
+									"    });",
+									"} else if (status === 401) {",
+									"    pm.test(\"❌ 401: Unauthorized\", function () {",
+									"        pm.response.to.have.status(401);",
+									"        pm.expect(responseText).to.include(\"не авторизован\");",
+									"        pm.expect.fail(\"401: Unauthorized\");",
+									"    });",
+									"} else if (status === 404) {",
+									"    pm.test(\"❌ 404: Not Found\", function () {",
+									"        pm.response.to.have.status(404);",
+									"        pm.expect(responseText).to.include(\"не найден\");",
+									"        pm.expect.fail(\"404: Not Found\");",
+									"    });",
+									"} else if (status === 500) {",
+									"    pm.test(\"❌ 500: Server Error\", function () {",
+									"        pm.response.to.have.status(500);",
+									"        pm.expect.fail(\"500: Server Error\");",
+									"    });",
+									"} else {",
+									"    pm.test(`❓ Unexpected status: ${status}`, function () {",
+									"        pm.expect.fail(`Unexpected status code: ${status}`);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"quantity\": {{randomQuantity}}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/orders/{{orderId}}/products/{{productId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"{{orderId}}",
+								"products",
+								"{{productId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deleting Product from the order",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const responseText = pm.response.text();",
+									"",
+									"// ✅ Успешное удаление",
+									"if (status === 200) {",
+									"    pm.test(\"✅ 200: Product successfully deleted\", function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"}",
+									"",
+									"// ❌ Неверный запрос",
+									"else if (status === 400) {",
+									"    pm.test(\"❌ 400: Bad Request\", function () {",
+									"        pm.response.to.have.status(400);",
+									"        pm.expect(responseText).to.include(\"Неверный запрос\");",
+									"        pm.expect.fail(\"400: Bad Request — failure\");",
+									"    });",
+									"}",
+									"",
+									"// ❌ Неавторизованный пользователь",
+									"else if (status === 401) {",
+									"    pm.test(\"❌ 401: Unauthorized\", function () {",
+									"        pm.response.to.have.status(401);",
+									"        pm.expect(responseText).to.include(\"не авторизован\");",
+									"        pm.expect.fail(\"401: Unauthorized — failure\");",
+									"    });",
+									"}",
+									"",
+									"// ❌ Заказ или товар не найден",
+									"else if (status === 404) {",
+									"    pm.test(\"❌ 404: Order or Product not found\", function () {",
+									"        pm.response.to.have.status(404);",
+									"        pm.expect(responseText).to.include(\"не найден\");",
+									"        pm.expect.fail(\"404: Order or Product not found — failure\");",
+									"    });",
+									"}",
+									"",
+									"// ❌ Ошибка сервера",
+									"else if (status === 500) {",
+									"    pm.test(\"❌ 500: Server error\", function () {",
+									"        pm.response.to.have.status(500);",
+									"        pm.expect.fail(\"500: Server error — failure\");",
+									"    });",
+									"}",
+									"",
+									"// ❌ Неожиданный статус",
+									"else {",
+									"    pm.test(`❓ Unexpected status: ${status}`, function () {",
+									"        pm.expect.fail(`Unexpected status code: ${status}`);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/orders/{{orderId}}/products/{{productId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"{{orderId}}",
+								"products",
+								"{{productId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update total sum of the orders of the user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const json = pm.response.json();",
+									"",
+									"// 200 OK — сумма обновлена",
+									"if (status === 200) {",
+									"    pm.test(\"✅ 200: Order total successfully updated\", function () {",
+									"        pm.response.to.have.status(200);",
+									"        pm.expect(json).to.have.property(\"totalSumWithDelivery\");",
+									"        pm.expect(json.totalSumWithDelivery).to.be.a(\"number\");",
+									"        pm.expect(json.message).to.include(\"Общая сумма заказов обновлена\");",
+									"    });",
+									"}",
+									"",
+									"// 401 — неавторизован",
+									"else if (status === 401) {",
+									"    pm.test(\"🔒 401: Unauthorized access\", function () {",
+									"        pm.response.to.have.status(401);",
+									"        pm.expect(pm.response.text()).to.include(\"не авторизован\");",
+									"    });",
+									"}",
+									"",
+									"// 500 — ошибка сервера",
+									"else if (status === 500) {",
+									"    pm.test(\"🔥 500: Server error\", function () {",
+									"        pm.response.to.have.status(500);",
+									"    });",
+									"}",
+									"",
+									"// Неожиданный статус",
+									"else {",
+									"    pm.test(`❓ Unexpected status: ${status}`, function () {",
+									"        pm.expect.fail(`Unexpected status code: ${status}`);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/update-orders-total",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"update-orders-total"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get data about payed orders",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const response = pm.response.json();",
+									"",
+									"// 200 OK — список заказов получен",
+									"if (status === 200) {",
+									"    pm.test(\"✅ 200: Paid orders retrieved\", function () {",
+									"        pm.response.to.have.status(200);",
+									"        pm.expect(response).to.be.an(\"array\");",
+									"",
+									"        if (response.length > 0) {",
+									"            const order = response[0];",
+									"            pm.expect(order).to.have.all.keys(\"order_id\", \"payment_date\", \"delivery_date\", \"totalPrice\", \"productImage\", \"productName\", \"quantity\");",
+									"            pm.expect(order.order_id).to.be.a(\"number\");",
+									"            pm.expect(order.payment_date).to.include(\"T\");",
+									"        } else {",
+									"            console.warn(\"⚠️ No paid orders found.\");",
+									"        }",
+									"    });",
+									"}",
+									"",
+									"// 401 — пользователь не авторизован",
+									"else if (status === 401) {",
+									"    pm.test(\"🔒 401: Unauthorized\", function () {",
+									"        pm.response.to.have.status(401);",
+									"        pm.expect(pm.response.text()).to.include(\"не предоставлен\");",
+									"    });",
+									"}",
+									"",
+									"// 500 — ошибка сервера",
+									"else if (status === 500) {",
+									"    pm.test(\"🔥 500: Server error\", function () {",
+									"        pm.response.to.have.status(500);",
+									"        pm.expect(pm.response.text()).to.include(\"Не удалось получить данные\");",
+									"    });",
+									"}",
+									"",
+									"// Неожиданный статус",
+									"else {",
+									"    pm.test(`❓ Unexpected status: ${status}`, function () {",
+									"        pm.expect.fail(`Unexpected status code: ${status}`);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/orders-history",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"orders-history"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Payment",
+			"item": [
+				{
+					"name": "All user's orders payment",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const validCards = {",
+									"    VISA: [",
+									"        {",
+									"            card_code: \"8820354696467284\",",
+									"            expiry_month: 12,",
+									"            expiry_year: 26,",
+									"            cvv: \"123\"",
+									"        }",
+									"    ],",
+									"    MasterCard: [",
+									"        {",
+									"            card_code: \"5248106661644884\",",
+									"            expiry_month: 12,",
+									"            expiry_year: 26,",
+									"            cvv: \"456\"",
+									"        }",
+									"    ],",
+									"    PayPal: [",
+									"        {",
+									"            email_paypal: \"valid@email.com\"",
+									"        }",
+									"    ]",
+									"};",
+									"",
+									"// 1. Случайный выбор типа оплаты",
+									"const cardTypes = Object.keys(validCards);",
+									"const randomType = cardTypes[Math.floor(Math.random() * cardTypes.length)];",
+									"const cardsList = validCards[randomType];",
+									"",
+									"// 2. Случайный метод из выбранного списка",
+									"const randomCard = cardsList[Math.floor(Math.random() * cardsList.length)];",
+									"",
+									"// 3. Сохранение переменных",
+									"pm.environment.set(\"card_type\", randomType);",
+									"pm.environment.set(\"email\", \"user@example.com\"); // Общее поле",
+									"",
+									"if (randomType === \"PayPal\") {",
+									"    pm.environment.set(\"email_paypal\", randomCard.email_paypal);",
+									"    // Очистим остальные поля, чтобы избежать конфликтов",
+									"    pm.environment.unset(\"card_code\");",
+									"    pm.environment.unset(\"expiry_month\");",
+									"    pm.environment.unset(\"expiry_year\");",
+									"    pm.environment.unset(\"cvv\");",
+									"    console.log(`💰 Using PayPal: ${randomCard.email_paypal}`);",
+									"} else {",
+									"    pm.environment.set(\"card_code\", randomCard.card_code);",
+									"    pm.environment.set(\"expiry_month\", randomCard.expiry_month);",
+									"    pm.environment.set(\"expiry_year\", randomCard.expiry_year);",
+									"    pm.environment.set(\"cvv\", randomCard.cvv);",
+									"    pm.environment.set(\"email_paypal\", \"valid@email.com\"); // Можно оставить как запасной вариант",
+									"    console.log(`💳 Using ${randomType}: ${randomCard.card_code}`);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const responseText = pm.response.text();",
+									"",
+									"// ✅ 200 — Успешная оплата",
+									"if (status === 200) {",
+									"    pm.test(\"✅ 200: Payment successful\", function () {",
+									"        pm.response.to.have.status(200);",
+									"        pm.expect(responseText).to.include(\"оплачены\");",
+									"    });",
+									"}",
+									"// ⚠️ 400 — Ошибка в карте, недостаточно средств или неподдерживаемый тип",
+									"else if (status === 400) {",
+									"    pm.test(\"⚠️ 400: Payment or card error\", function () {",
+									"        pm.response.to.have.status(400);",
+									"        pm.expect(responseText).to.match(/карты|средств|не поддерживается/i);",
+									"    });",
+									"}",
+									"// 🔒 401 — Не авторизован",
+									"else if (status === 401) {",
+									"    pm.test(\"🔒 401: Unauthorized\", function () {",
+									"        pm.response.to.have.status(401);",
+									"        pm.expect(responseText).to.include(\"не авторизован\");",
+									"    });",
+									"}",
+									"// 🔥 500 — Ошибка сервера при обработке",
+									"else if (status === 500) {",
+									"    pm.test(\"🔥 500: Server error\", function () {",
+									"        pm.response.to.have.status(500);",
+									"        pm.expect(responseText).to.include(\"Ошибка сервера\");",
+									"    });",
+									"}",
+									"// ❓ Неожиданный ответ",
+									"else {",
+									"    pm.test(`❓ Unexpected status: ${status}`, function () {",
+									"        pm.expect.fail(`Unexpected status code: ${status}`);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"card_type\": \"{{card_type}}\",\n  \"card_code\": \"{{card_code}}\",\n  \"expiry_month\": {{expiry_month}},\n  \"expiry_year\": {{expiry_year}},\n  \"cvv\": \"{{cvv}}\",\n  \"email\": \"{{email}}\",\n  \"email_paypal\": \"{{email_paypal}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/pay",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"pay"
+							]
+						},
+						"description": "Infromation about valid and invalid payment methods: [https://artsiomrusau.youtrack.cloud/articles/FTT-A-1/Testovye-dannye-dlya-Visa-MasterCard-PayPal](https://artsiomrusau.youtrack.cloud/articles/FTT-A-1/Testovye-dannye-dlya-Visa-MasterCard-PayPal)\n\nUPDATE PRE-REQUEST IF DATA WAS CHANGED"
+					},
+					"response": []
+				},
+				{
+					"name": "Balance of cards and PayPal update through Get request",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const body = pm.response.text(); // ← заменили json() на text()",
+									"",
+									"if (status === 200) {",
+									"    pm.test(\"✅ 200: Балансы успешно обновлены\", function () {",
+									"        pm.response.to.have.status(200);",
+									"        pm.expect(body).to.include(\"Балансы успешно обновлены\");",
+									"    });",
+									"} else if (status === 500) {",
+									"    pm.test(\"🔥 500: Внутренняя ошибка сервера\", function () {",
+									"        pm.response.to.have.status(500);",
+									"        pm.expect(body).to.include(\"Внутренняя ошибка сервера\");",
+									"        pm.expect.fail(\"❌ Сервер вернул 500 при обновлении балансов\");",
+									"    });",
+									"} else {",
+									"    pm.test(`❓ Unexpected status: ${status}`, function () {",
+									"        pm.expect.fail(`❌ Неожиданный статус: ${status}`);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/updateBalances",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"updateBalances"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Database",
+			"item": [
+				{
+					"name": "Reset Database",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const status = pm.response.code;",
+									"const responseText = pm.response.text();",
+									"",
+									"if (status === 200) {",
+									"    pm.test(\"✅ 200: Database successfully reset\", function () {",
+									"        pm.response.to.have.status(200);",
+									"        pm.expect(responseText).to.include(\"успешно\"); // если есть сообщение",
+									"    });",
+									"} else if (status === 500) {",
+									"    pm.test(\"❌ 500: Internal Server Error - Database reset failed\", function () {",
+									"        pm.response.to.have.status(500);",
+									"        pm.expect(responseText).to.include(\"ошибка\"); // проверка на текст ошибки",
+									"    });",
+									"} else {",
+									"    pm.test(`❓ Unexpected status: ${status}`, function () {",
+									"        pm.expect.fail(`Unexpected status code: ${status}`);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/reset-database",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"reset-database"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{key}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"// Списки значений",
+					"const categories = [\"Laptops\", \"Phones\", \"Watches\"];",
+					"const manufacturers = [\"Apple\", \"Xiaomi\", \"Huawei\", \"Samsung\"];",
+					"const shippingOptions = [true, false];",
+					"",
+					"// Генерация случайных значений",
+					"const randomCategory = categories[Math.floor(Math.random() * categories.length)];",
+					"const randomManufacturer = manufacturers[Math.floor(Math.random() * manufacturers.length)];",
+					"const randomShipping = shippingOptions[Math.floor(Math.random() * shippingOptions.length)];",
+					"const minPrice = Math.floor(Math.random() * 500); // от 0 до 499",
+					"const maxPrice = minPrice + Math.floor(Math.random() * 500) + 1;",
+					"",
+					"// Установка переменных — локально, чтобы не затереть collection-переменные",
+					"pm.variables.set(\"category\", randomCategory);",
+					"pm.variables.set(\"manufacturer\", randomManufacturer);",
+					"pm.variables.set(\"freeShipping\", randomShipping);",
+					"pm.variables.set(\"minPrice\", minPrice);",
+					"pm.variables.set(\"maxPrice\", maxPrice);",
+					"",
+					"// Лог (можно убрать)",
+					"console.log(`[COLLECTION] Категория: ${randomCategory}`);",
+					"console.log(`[COLLECTION] Производитель: ${randomManufacturer}`);",
+					"console.log(`[COLLECTION] Бесплатная доставка: ${randomShipping}`);",
+					"console.log(`[COLLECTION] Цена: от ${minPrice} до ${maxPrice}`);",
+					"",
+					"let testMode = \"positive\"; // можно менять на \"negative\"",
+					"",
+					"function getRandomFrom(str) {",
+					"    return str.charAt(Math.floor(Math.random() * str.length));",
+					"}",
+					"",
+					"function generateValidUsername(length) {",
+					"    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_';",
+					"    let result = '';",
+					"    for (let i = 0; i < length; i++) {",
+					"        result += getRandomFrom(chars);",
+					"    }",
+					"    return result;",
+					"}",
+					"",
+					"function generateInvalidUsername(caseType) {",
+					"    const cyrillic = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';",
+					"    const special = '!@#$%^&*()-=+,.';",
+					"    switch (caseType) {",
+					"        case \"tooShort\": return generateValidUsername(2);",
+					"        case \"tooLong\": return generateValidUsername(16);",
+					"        case \"invalidChars\": return getRandomFrom(cyrillic) + getRandomFrom(special) + getRandomFrom(cyrillic);",
+					"        default: return \"??\";",
+					"    }",
+					"}",
+					"",
+					"function generateValidPassword(length) {",
+					"    const letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';",
+					"    const digits = '0123456789';",
+					"    const all = letters + digits;",
+					"    let password = getRandomFrom(letters) + getRandomFrom(digits);",
+					"    for (let i = 2; i < length; i++) {",
+					"        password += getRandomFrom(all);",
+					"    }",
+					"    return password;",
+					"}",
+					"",
+					"function generateInvalidPassword(caseType) {",
+					"    const letters = 'abcdefghijklmnopqrstuvwxyz';",
+					"    const digits = '0123456789';",
+					"    switch (caseType) {",
+					"        case \"tooShort\": return generateValidPassword(7);",
+					"        case \"noDigits\": return letters.repeat(8).substring(0, 8);",
+					"        case \"noLetters\": return digits.repeat(8).substring(0, 8);",
+					"        default: return \"1234567\";",
+					"    }",
+					"}",
+					"",
+					"let username = \"\";",
+					"let password = \"\";",
+					"",
+					"if (testMode === \"positive\") {",
+					"    username = generateValidUsername(Math.floor(Math.random() * 13) + 3);",
+					"    password = generateValidPassword(Math.floor(Math.random() * 5) + 8);",
+					"} else {",
+					"    const usernameCases = [\"tooShort\", \"tooLong\", \"invalidChars\"];",
+					"    const passwordCases = [\"tooShort\", \"noDigits\", \"noLetters\"];",
+					"    username = generateInvalidUsername(usernameCases[Math.floor(Math.random() * usernameCases.length)]);",
+					"    password = generateInvalidPassword(passwordCases[Math.floor(Math.random() * passwordCases.length)]);",
+					"}",
+					"",
+					"// Сохраняем для регистрации и логина",
+					"pm.environment.set(\"username\", username);",
+					"pm.environment.set(\"password\", password);",
+					"",
+					"// Сохраняем для тестов отдельно (например, в корзине или проверке)",
+					"pm.environment.set(\"test_username\", username);",
+					"pm.environment.set(\"test_password\", password);",
+					"",
+					"// Лог (удобно отладить)",
+					"console.log(\"[GEN] username:\", username);",
+					"console.log(\"[GEN] password:\", password);",
+					"",
+					"// ",
+					"if (!pm.environment.get(\"username_login\")) {",
+					"    ",
+					"    pm.environment.set(\"username_login\", username);",
+					"    pm.environment.set(\"password_login\", password);",
+					"",
+					"    // Дублируем для тестов",
+					"    pm.environment.set(\"test_username\", username);",
+					"    pm.environment.set(\"test_password\", password);",
+					"",
+					"    console.log(\"[GEN once] New login credentials generated:\", username, password);",
+					"} else {",
+					"    console.log(\"[SKIP] Login credentials already exist\");",
+					"}",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"pm.test(\"⏱ [Global] Response time < 1000ms\", function () {",
+					"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "key",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "username",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "password",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "product_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "category",
+			"value": "{{category}}",
+			"type": "string"
+		},
+		{
+			"key": "manufacturer",
+			"value": "{{manufacturer}}",
+			"type": "string"
+		},
+		{
+			"key": "freeShipping",
+			"value": "{{freeShipping}}",
+			"type": "string"
+		},
+		{
+			"key": "minPrice",
+			"value": "{{minPrice}}",
+			"type": "string"
+		},
+		{
+			"key": "maxPrice",
+			"value": "{{maxPrice}}",
+			"type": "string"
+		},
+		{
+			"key": "test_username",
+			"value": "{{test_username}}",
+			"type": "string"
+		},
+		{
+			"key": "test_password",
+			"value": "{{test_password}}",
+			"type": "string"
+		},
+		{
+			"key": "delete_user_id",
+			"value": "{{delete_user_id}}",
+			"type": "string"
+		},
+		{
+			"key": "test_product_id",
+			"value": "{{test_product_id}}",
+			"type": "string"
+		},
+		{
+			"key": "test_quantity",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "username_login",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "password_login",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "cartItemId",
+			"value": ""
+		},
+		{
+			"key": "orderId",
+			"value": ""
+		},
+		{
+			"key": "productId",
+			"value": ""
+		},
+		{
+			"key": "card_type",
+			"value": ""
+		},
+		{
+			"key": "email",
+			"value": ""
+		},
+		{
+			"key": "email_paypal",
+			"value": ""
+		},
+		{
+			"key": "card_code",
+			"value": ""
+		},
+		{
+			"key": "expiry_month",
+			"value": ""
+		},
+		{
+			"key": "expiry_year",
+			"value": ""
+		},
+		{
+			"key": "cvv",
+			"value": ""
+		}
+	]
+}
